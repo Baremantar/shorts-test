@@ -78,7 +78,7 @@ export default {
     ref="flicking"
     class="flicker-wrapper"
   >
-    <video v-for="source in data" :key="source" muted>
+    <video v-for="source in data" :key="source" muted playsinline>
       <source :src="source" type="video/mp4" />
     </video>
   </Flicking>
