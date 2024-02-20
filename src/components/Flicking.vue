@@ -32,13 +32,20 @@ export default {
       video.pause();
     },
     triggerSlide(e) {
-        const video = e.currentTarget.currentPanel.element;
-        if(video.currentTime > 0 && !video.paused){
-            video.pause();
-        } else if (video.paused) {
-            video.play()
-        }
-    }
+      const video = e.currentTarget.currentPanel.element;
+      if (video.currentTime > 0 && !video.paused) {
+        video.pause();
+      } else if (video.paused) {
+        video.play();
+      }
+    },
+    onStopVideo() {
+      Array.from(document.querySelectorAll("video"), (element) => {
+        element.addEventListener("ended", () => {
+          this.$refs.flicking.next();
+        });
+      });
+    },
   },
 };
 </script>
@@ -59,9 +66,15 @@ export default {
     @ready="
       (e) => {
         playSlide(e);
+        onStopVideo();
       }
     "
-    @select="e => {triggerSlide(e)}"
+    @select="
+      (e) => {
+        triggerSlide(e);
+      }
+    "
+    gap="20"
     ref="flicking"
     class="flicker-wrapper"
   >
@@ -75,10 +88,39 @@ export default {
 .flicker-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   max-width: 500px;
 }
 video {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   max-width: 500px;
   max-height: 900px;
 }
+
+@media (max-width: 1536px) {
+  video {
+    max-height: 800px;
+  }
+}
+
+@media (max-width: 1280px) {
+  video {
+    max-height: 700px;
+  }
+}
+
+@media (max-width: 999px) {
+  video {
+    max-height: 600px;
+  }
+}
+
+@media (max-width: 430px) {
+  video {
+    max-height: 50%;
+  }
+}
+
 </style>
