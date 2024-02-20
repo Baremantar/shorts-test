@@ -7,14 +7,10 @@ import vid4 from "../assets/video/children-bar.mp4";
 import vid5 from "../assets/video/park.mp4";
 import vid6 from "../assets/video/WI-FI.mp4";
 import vid7 from "../assets/video/zoo.mp4";
-import {ref} from 'vue';
+import { ref } from "vue";
 
-
+const flicking = ref(null);
 const data = [vid1, vid2, vid3, vid4, vid5, vid6, vid7];
-const videoOptions = ref({
-    autoplay: false,
-    current: {}
-});
 
 export default {
   components: {
@@ -23,22 +19,53 @@ export default {
   data() {
     return {
       data,
-      videoOptions,
+      flicking,
     };
   },
+  methods: {
+    playSlide(e) {
+      const video = e.currentTarget.currentPanel.element;
+      video.play();
+    },
+    stopSlide(e) {
+      const video = e.currentTarget.currentPanel.element;
+      video.pause();
+    },
+    triggerSlide(e) {
+        const video = e.currentTarget.currentPanel.element;
+        if(video.currentTime > 0 && !video.paused){
+            video.pause();
+        } else if (video.paused) {
+            video.play()
+        }
+    }
+  },
 };
-
-
-
 </script>
 
 <template>
   <Flicking
     :options="{ circular: true, horizontal: false }"
-    @move-end="e => {  }"
+    @changed="
+      (e) => {
+        playSlide(e);
+      }
+    "
+    @will-change="
+      (e) => {
+        stopSlide(e);
+      }
+    "
+    @ready="
+      (e) => {
+        playSlide(e);
+      }
+    "
+    @select="e => {triggerSlide(e)}"
+    ref="flicking"
     class="flicker-wrapper"
   >
-    <video v-for="source in data" :key="source" v-bind:autoplay="videoOptions.autoplay">
+    <video v-for="source in data" :key="source" muted>
       <source :src="source" type="video/mp4" />
     </video>
   </Flicking>
